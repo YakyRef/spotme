@@ -1,12 +1,17 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-// a test route to make sure we can reach the backend
-//this would normally go in a routes file
-app.get('/test', (req, res) => {
-res.send('Welcome to the backend!')
-})
-//Set the port that you want the server to run on
+const publicPath = path.join(__dirname, '..', 'client/public');
+// const port = process.env.PORT || 3000;
 const port = process.env.PORT || 8080;
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+ });
+
+app.get('/test', (req, res) => {
+    res.send('Welcome to the backend!')
+})
+
 app.listen(port);
 console.log('App is listening on port ' + port);
