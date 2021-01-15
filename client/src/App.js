@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import axios from "axios";
+// import logo from "./logo.svg";
 import "./App.css";
 
 class App extends Component {
@@ -20,18 +20,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        asasasdads
         <p className="App-intro">xxxxx</p>
-        <button onClick={this.hitBackend}>Send request</button>
       </div>
     );
   }
-  hitBackend(){
-    axios.get('/test')
-    .then((response) => {
-    console.log(response.data)
-  })
- }
-    
 }
 
 export default App;
