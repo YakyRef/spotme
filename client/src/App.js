@@ -8,7 +8,7 @@ class App extends Component {
     const params = this.getHashParams();
     this.state = {
       loggedIn: params.access_token ? true : false,
-      currentAlbumSearch: "xx",
+      currentAlbumSearch: "",
       albums: [],
       nowPlaying: {
         name: "",
@@ -30,6 +30,10 @@ class App extends Component {
     // this.callApi()
     //   .then(res => this.setState({ response: res.express }))
     //   .catch(err => console.log(err));
+    
+  }
+  fetchAlbums(){
+    spotifyWebApi.searchAlbums('mosh').then(res=>console.log(res))
   }
 
   callApi = async () => {
