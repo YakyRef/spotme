@@ -1,74 +1,77 @@
-import React, { Component } from 'react';
-
-import logo from './logo.svg';
-
-import './App.css';
-
+import React, { Component } from "react";
+import "./App.css";
+import Spotify from "spotify-web-api-js";
+const spotifyWebApi = new Spotify();
 class App extends Component {
-  state = {
-    response: '',
-    post: '',
-    responseToPost: '',
-  };
-  
-  componentDidMount() {
-    this.callApi()
-      .then(res => this.setState({ response: res.express }))
-      .catch(err => console.log(err));
-  }
-  
-  callApi = async () => {
-    const response = await fetch('/api/hello');
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
-    
-    return body;
-  };
-  
-  handleSubmit = async e => {
-    e.preventDefault();
-    const response = await fetch('/api/world', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  constructor(props) {
+    super(props);
+    const params = this.getHashParams();
+    this.state = {
+      loggedIn: params.access_token ? true : false,
+      currentAlbumSearch: "xx",
+      albums: [],
+      nowPlaying: {
+        name: "",
+        image: "",
       },
-      body: JSON.stringify({ post: this.state.post }),
+    };
+    this.handleAlbumSearch = this.handleAlbumSearch.bind(this);
+    if (params.access_token) {
+      spotifyWebApi.setAccessToken(params.access_token);
+    }
+  }
+
+  getNowPlaying() {
+    spotifyWebApi.getMyCurrentPlayingTrack().then((res) => {
+      console.log(res);
     });
-    const body = await response.text();
-    
-    this.setState({ responseToPost: body });
+  }
+  componentDidMount() {
+    // this.callApi()
+    //   .then(res => this.setState({ response: res.express }))
+    //   .catch(err => console.log(err));
+  }
+
+  callApi = async () => {
+    // const response = await fetch('/api/hello');
+    // const body = await response.json();
+    // if (response.status !== 200) throw Error(body.message);
+    // return body;
   };
-  
-render() {
+
+  getHashParams() {
+    var hashParams = {};
+    var e,
+      r = /([^&;=]+)=?([^&;]*)/g,
+      q = window.location.hash.substring(1);
+    while ((e = r.exec(q))) {
+      hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+    return hashParams;
+  }
+  handleAlbumSearch(event) {
+    this.setState({ currentAlbumSearch: event.target.value });
+  }
+  render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-        <p>{this.state.response}</p>
-        <form onSubmit={this.handleSubmit}>
-          <p>
-            <strong>Post to Server:</strong>
-          </p>
-          <input
-            type="text"
-            value={this.state.post}
-            onChange={e => this.setState({ post: e.target.value })}
-          />
-          <button type="submit">Submit</button>
+        <a href="http://localhost:8888">
+          <button>Loggin to Spotify</button>
+        </a>
+        <p>
+          <button onClick={() => this.getNowPlaying()}>getNowPlaying</button>
+        </p>
+       
+        <form>
+          <label>
+            Search:
+            <input
+              type="text"
+              value={this.state.currentAlbumSearch}
+              onChange={this.handleAlbumSearch}
+            />
+          </label>
         </form>
-        <p>{this.state.responseToPost}</p>
       </div>
     );
   }
