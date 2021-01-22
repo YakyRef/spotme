@@ -2,20 +2,11 @@ import React, { useState, useCallback } from "react";
 import _ from "lodash";
 import "./App.css";
 import Album from "./components/album/Album.js";
+import { getHashParams } from "./helpers/hashParams";
 import Spotify from "spotify-web-api-js";
 const spotifyWebApi = new Spotify();
 
 function App() {
-  const getHashParams = () => {
-    var hashParams = {};
-    var e,
-      r = /([^&;=]+)=?([^&;]*)/g,
-      q = window.location.hash.substring(1);
-    while ((e = r.exec(q))) {
-      hashParams[e[1]] = decodeURIComponent(e[2]);
-    }
-    return hashParams;
-  };
   const params = getHashParams();
   const [loggedIn] = useState(params.access_token ? true : false);
   const [currentAlbumSearch, setCurrentAlbum] = useState("");
@@ -25,7 +16,7 @@ function App() {
     spotifyWebApi.setAccessToken(params.access_token);
   }
 
-  const debouncedSave = useCallback(
+  const getAlbumsDebounced = useCallback(
     _.debounce(
       (nextValue) =>
         spotifyWebApi
@@ -39,7 +30,7 @@ function App() {
   const handleAlbumSearch = (event) => {
     const { value: nextValue } = event.target;
     setCurrentAlbum(nextValue);
-    debouncedSave(nextValue);
+    getAlbumsDebounced(nextValue);
   };
 
   return (
