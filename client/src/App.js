@@ -36,8 +36,7 @@ function App() {
     setCurrentAlbum(nextValue);
     debouncedSave(nextValue);
   };
-
-  // spotifyWebApi.searchAlbums("mosh").then((res) => console.log(res));
+  
 
   return (
     <div className="App">
@@ -45,10 +44,6 @@ function App() {
         <button>Loggin to Spotify</button>
       </a>
       <p>logged-in : {JSON.stringify(loggedIn)}</p>
-      <p>
-        <button onClick={() => this.getNowPlaying()}>getNowPlaying</button>
-      </p>
-
       <form>
         <label>
           Search:
