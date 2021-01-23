@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 
 var client_id = ''; 
 var client_secret = ''; 
-var redirect_uri = ''; 
+var redirect_uri = 'http://localhost:8888/callback'; 
 
 /**
  * Generates a random string containing numbers and letters

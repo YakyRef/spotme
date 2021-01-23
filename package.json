@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "scripts": {
     "client": "cd client && yarn start",
-    "server": "nodemon server.js",
-    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "server": "node auth_server/authorization_code/app.js",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "start": "node server.js",
+    "install-all": "npm install && cd client && npm install",
     "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
   },
   "dependencies": {
