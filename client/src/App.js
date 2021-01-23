@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import _ from "lodash";
 import "./App.scss";
 import Album from "./components/album/Album.js";
-import { Button, TextField, Grid } from "@material-ui/core";
+import { Button, TextField, GridList } from "@material-ui/core";
 import { getHashParams } from "./helpers/hashParams";
 import Spotify from "spotify-web-api-js";
 const spotifyWebApi = new Spotify();
@@ -11,7 +11,7 @@ function App() {
   const params = getHashParams();
   const limit = 15;
   const [offset, setOffset] = useState(0);
-  const [loggedIn] = useState(params.access_token ? true : false);
+  const [loggedIn, setLoggedIn] = useState(params.access_token ? true : false);
   const [currentAlbumSearch, setCurrentAlbum] = useState("");
   const [albums, setAlbums] = useState({
     items: [],
@@ -25,7 +25,10 @@ function App() {
   const fetchAlbumsFromApi = (value) => {
     return spotifyWebApi
       .searchAlbums(value, { limit, offset })
-      .then((res) => setAlbums({ ...albums, ...res.albums }));
+      .then((res) => {
+        setAlbums({ ...albums, ...res.albums });
+      })
+      .catch((err) => err === 401 && setLoggedIn(false));
   };
 
   const getAlbumsDebounced = useCallback(
@@ -49,35 +52,49 @@ function App() {
   };
   return !loggedIn ? (
     <div className="App">
-      <a href="http://localhost:8888">
-        <button>Loggin to Spotify</button>
+      <a href="http://localhost:8888" className="log-in-button">
+        <Button>Loggin to Spotify</Button>
       </a>
     </div>
   ) : (
     <div className="App">
-      <form>
-        <label>
-          <TextField
-            id="search"
-            label="search"
-            variant="outlined"
-            value={currentAlbumSearch}
-            onChange={handleAlbumSearch}
-          />
-        </label>
-      </form>
-      <Grid container className="albums" spacing={5}>
+      <div id="search">
+        <TextField
+          id="search__input"
+          label="search"
+          variant="filled"
+          value={currentAlbumSearch}
+          onChange={handleAlbumSearch}
+        />
+      </div>
+
+      <GridList cellHeight={200} className="albums">
         {albums.items ? (
           albums.items.map((album) => <Album key={album.id} {...album} />)
         ) : (
           <span>no results...</span>
         )}
-      </Grid>
-      <div>
-        <Button onClick={onBackClick} disabled={offset < 1 ? true : false}>
+      </GridList>
+
+      <div className="nav-bar">
+        <Button
+          className="nav-bar__button"
+          variant="contained"
+          color="primary"
+          onClick={onBackClick}
+          disabled={offset < 1 ? true : false}
+        >
           Back
         </Button>
-        <Button onClick={onNextClick}>Next</Button>
+        <Button
+          className="nav-bar__button"
+          variant="contained"
+          color="primary"
+          disabled={!albums.items.length ? true : false}          
+          onClick={onNextClick}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );

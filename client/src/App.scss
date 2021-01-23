@@ -5,9 +5,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction:column;
+  flex-direction: column;
+  background-color: #212121;
+  .log-in-button {
+    background-color: #1db954;
+    text-decoration: none;
+    padding: 25px;
+  }
+  #search {
+    margin: 35px 0;
+    background-color: #1db954;
+    &__input {
+      color: 	#121212;
+    }
+  }
   .albums {
-    margin: 25px 0;
     display: flex;
+    justify-content: center;
+    max-width: 75vw;
+  }
+  .nav-bar{
+    margin-top: 25px;
+    &__button{
+      margin: 0 10px;
+    }
   }
 }

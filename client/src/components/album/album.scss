@@ -1,3 +1,7 @@
 .album{
     text-align: center;
+    border: 1px solid #fff;
+    &__image{
+        max-height: 200px;
+    }
 }
