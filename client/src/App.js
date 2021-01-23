@@ -8,22 +8,27 @@ const spotifyWebApi = new Spotify();
 
 function App() {
   const params = getHashParams();
+  const limit = 15;
   const [loggedIn] = useState(params.access_token ? true : false);
   const [currentAlbumSearch, setCurrentAlbum] = useState("");
-  const [albums, setAlbums] = useState({ items: [], total: 0, limit: 0 });
+  const [albums, setAlbums] = useState({
+    items: [],
+    total: 0,
+  });
+  const [offset, setOffset] = useState(0);
 
   if (params.access_token) {
     spotifyWebApi.setAccessToken(params.access_token);
   }
 
+  const fetchAlbumsFromApi = (value) => {
+    return spotifyWebApi
+      .searchAlbums(value, { limit, offset })
+      .then((res) => setAlbums({...albums, ...res.albums}));
+  };
+
   const getAlbumsDebounced = useCallback(
-    _.debounce(
-      (nextValue) =>
-        spotifyWebApi
-          .searchAlbums(nextValue)
-          .then((res) => setAlbums(res.albums || {})),
-      1000
-    ),
+    _.debounce(fetchAlbumsFromApi, 1000),
     []
   );
 
@@ -33,6 +38,14 @@ function App() {
     getAlbumsDebounced(nextValue);
   };
 
+  const onNextClick = () => {
+    setOffset(offset + limit);
+    fetchAlbumsFromApi(currentAlbumSearch)
+  };
+  const onBackClick = () => {
+    setOffset(offset - limit);
+    fetchAlbumsFromApi(currentAlbumSearch)
+  };
   return (
     <div className="App">
       <a href="http://localhost:8888">
@@ -57,7 +70,8 @@ function App() {
         )}
       </div>
       <div>
-        <button>Next</button>
+        <button onClick={onBackClick}>Back</button>
+        <button onClick={onNextClick}>Next</button>
       </div>
     </div>
   );
