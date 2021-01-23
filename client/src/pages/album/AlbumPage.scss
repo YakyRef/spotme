@@ -1,0 +1,37 @@
+.album-page {
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  &__header {
+    display: flex;
+    flex-direction: row;
+    .thumbnail{
+        max-height: 200px;
+        >img{
+            height: 200px;
+        }
+    }
+    .description{
+        margin-left: 15px;
+        &__band{
+            font-size: 24px;
+        }
+        &__album{
+            font-size: 20px;
+        }
+    }
+  }
+  &__tracks {
+    display: flex;
+    flex-direction: row;
+    .track {
+      border: 1px solid rgba(96, 222, 244, 0.44);
+      border-radius: 3px;
+      padding: 5px;
+      text-align: center;
+      width: 60px;
+      height: 60px;
+      margin: 5px;
+    }
+  }
+}

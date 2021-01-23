@@ -1,7 +1,10 @@
 import React, { useState, useCallback } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import _ from "lodash";
 import "./App.scss";
+
 import Album from "./components/album/Album.js";
+import AlbumPage from "./pages/album/AlbumPage";
 import { Button, TextField, GridList } from "@material-ui/core";
 import { getHashParams } from "./helpers/hashParams";
 import Spotify from "spotify-web-api-js";
@@ -28,7 +31,7 @@ function App() {
       .then((res) => {
         setAlbums({ ...albums, ...res.albums });
       })
-      .catch((err) => err === 401 && setLoggedIn(false));
+      .catch((err) => err.status === 401 && setLoggedIn(false));
   };
 
   const getAlbumsDebounced = useCallback(
@@ -57,46 +60,55 @@ function App() {
       </a>
     </div>
   ) : (
-    <div className="App">
-      <div id="search">
-        <TextField
-          id="search__input"
-          label="search"
-          variant="filled"
-          value={currentAlbumSearch}
-          onChange={handleAlbumSearch}
-        />
-      </div>
+    <Router>
+      <div className="App">
+        <Switch>
+          <Route exact path="/">
+            <div id="search">
+              <TextField
+                id="search__input"
+                label="search"
+                variant="filled"
+                value={currentAlbumSearch}
+                onChange={handleAlbumSearch}
+              />
+            </div>
 
-      <GridList cellHeight={200} className="albums">
-        {albums.items ? (
-          albums.items.map((album) => <Album key={album.id} {...album} />)
-        ) : (
-          <span>no results...</span>
-        )}
-      </GridList>
+            <GridList cellHeight={200} className="albums">
+              {albums.items ? (
+                albums.items.map((album) => <Album key={album.id} {...album} />)
+              ) : (
+                <span>no results...</span>
+              )}
+            </GridList>
 
-      <div className="nav-bar">
-        <Button
-          className="nav-bar__button"
-          variant="contained"
-          color="primary"
-          onClick={onBackClick}
-          disabled={offset < 1 ? true : false}
-        >
-          Back
-        </Button>
-        <Button
-          className="nav-bar__button"
-          variant="contained"
-          color="primary"
-          disabled={!albums.items.length ? true : false}          
-          onClick={onNextClick}
-        >
-          Next
-        </Button>
+            <div className="nav-bar">
+              <Button
+                className="nav-bar__button"
+                variant="contained"
+                color="primary"
+                onClick={onBackClick}
+                disabled={offset < 1 ? true : false}
+              >
+                Back
+              </Button>
+              <Button
+                className="nav-bar__button"
+                variant="contained"
+                color="primary"
+                disabled={!albums.items.length ? true : false}
+                onClick={onNextClick}
+              >
+                Next
+              </Button>
+            </div>
+          </Route>
+          <Route path="/album/:id">
+            <AlbumPage />
+          </Route>
+        </Switch>
       </div>
-    </div>
+    </Router>
   );
 }
 

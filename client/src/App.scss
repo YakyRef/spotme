@@ -1,4 +1,5 @@
 @import "./components/album/album.scss";
+@import "./pages/album/AlbumPage.scss";
 .App {
   height: 100vh;
   width: 100vw;
@@ -14,15 +15,15 @@
   }
   #search {
     margin: 35px 0;
-    background-color: #1db954;
+    background-color: rgba($color: #ccc, $alpha: 0.2);
     &__input {
-      color: 	#121212;
+      color: 	#fff;
     }
   }
   .albums {
     display: flex;
     justify-content: center;
-    max-width: 75vw;
+    max-width: 1024px;
   }
   .nav-bar{
     margin-top: 25px;
