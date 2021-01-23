@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from "react";
 import _ from "lodash";
-import "./App.css";
+import "./App.scss";
 import Album from "./components/album/Album.js";
+import { Button, TextField, Grid } from "@material-ui/core";
 import { getHashParams } from "./helpers/hashParams";
 import Spotify from "spotify-web-api-js";
 const spotifyWebApi = new Spotify();
@@ -9,13 +10,13 @@ const spotifyWebApi = new Spotify();
 function App() {
   const params = getHashParams();
   const limit = 15;
+  const [offset, setOffset] = useState(0);
   const [loggedIn] = useState(params.access_token ? true : false);
   const [currentAlbumSearch, setCurrentAlbum] = useState("");
   const [albums, setAlbums] = useState({
     items: [],
     total: 0,
   });
-  const [offset, setOffset] = useState(0);
 
   if (params.access_token) {
     spotifyWebApi.setAccessToken(params.access_token);
@@ -24,7 +25,7 @@ function App() {
   const fetchAlbumsFromApi = (value) => {
     return spotifyWebApi
       .searchAlbums(value, { limit, offset })
-      .then((res) => setAlbums({...albums, ...res.albums}));
+      .then((res) => setAlbums({ ...albums, ...res.albums }));
   };
 
   const getAlbumsDebounced = useCallback(
@@ -40,38 +41,43 @@ function App() {
 
   const onNextClick = () => {
     setOffset(offset + limit);
-    fetchAlbumsFromApi(currentAlbumSearch)
+    fetchAlbumsFromApi(currentAlbumSearch);
   };
   const onBackClick = () => {
     setOffset(offset - limit);
-    fetchAlbumsFromApi(currentAlbumSearch)
+    fetchAlbumsFromApi(currentAlbumSearch);
   };
-  return (
+  return !loggedIn ? (
     <div className="App">
       <a href="http://localhost:8888">
         <button>Loggin to Spotify</button>
       </a>
-      <p>logged-in : {JSON.stringify(loggedIn)}</p>
+    </div>
+  ) : (
+    <div className="App">
       <form>
         <label>
-          Search:
-          <input
-            type="text"
+          <TextField
+            id="search"
+            label="search"
+            variant="outlined"
             value={currentAlbumSearch}
             onChange={handleAlbumSearch}
           />
         </label>
       </form>
-      <div className="albums">
+      <Grid container className="albums" spacing={5}>
         {albums.items ? (
           albums.items.map((album) => <Album key={album.id} {...album} />)
         ) : (
           <span>no results...</span>
         )}
-      </div>
+      </Grid>
       <div>
-        <button onClick={onBackClick}>Back</button>
-        <button onClick={onNextClick}>Next</button>
+        <Button onClick={onBackClick} disabled={offset < 1 ? true : false}>
+          Back
+        </Button>
+        <Button onClick={onNextClick}>Next</Button>
       </div>
     </div>
   );
